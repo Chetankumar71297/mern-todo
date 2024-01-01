@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-const api_base = "https://mern-todo-api-osu5.onrender.com";
+const api_base = "https://todo-typescript-api.onrender.com";
 
 const HomePage = () => {
   const [todos, setTodos] = useState([]);
