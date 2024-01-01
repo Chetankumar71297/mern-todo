@@ -6,22 +6,23 @@ const HomePage = () => {
   const [todos, setTodos] = useState([]);
   const [popupActive, setPopupActive] = useState(false);
   const [newTodo, setNewTodo] = useState("");
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     GetTodos();
   }, []);
 
   const GetTodos = () => {
-    fetch(api_base + "/todos")
+    fetch(api_base + "/api/v1/todo")
       .then((res) => res.json())
       .then((data) => setTodos(data))
       .catch((err) => console.error("Error: ", err));
   };
 
-  const changeCompleteStatusTodo = async (id) => {
-    const data = await fetch(api_base + "/todo/complete/" + id).then((res) =>
-      res.json()
-    );
+  const changeCompleteStatusTodo = async (todoId) => {
+    const data = await fetch(api_base + "/api/v1/todo/" + todoId, {
+      method: "PATCH",
+    }).then((res) => res.json());
     console.log(data);
     console.log(todos);
     setTodos((todos) =>
@@ -39,7 +40,12 @@ const HomePage = () => {
   };
 
   const addTodo = async () => {
-    const data = await fetch(api_base + "/todo/new", {
+    if (!newTodo) {
+      setFormError("Provide some information about your todo");
+      return;
+    }
+    setFormError("");
+    const data = await fetch(api_base + "/api/v1/todo", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,8 +64,8 @@ const HomePage = () => {
     }
   };
 
-  const deleteTodo = async (id) => {
-    const data = await fetch(api_base + "/todo/delete/" + id, {
+  const deleteTodo = async (todoId) => {
+    const data = await fetch(api_base + "/api/v1/todo/" + todoId, {
       method: "DELETE",
     }).then((res) => res.json());
 
@@ -121,6 +127,7 @@ const HomePage = () => {
                 onChange={(e) => setNewTodo(e.target.value)}
                 value={newTodo}
               />
+              {formError ? <p className="text">{formError}</p> : null}
               <div className="button" onClick={addTodo}>
                 Create Task
               </div>
